@@ -1,92 +1,122 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChefAI</title>
-    <style>
-        body {
-            background: linear-gradient(180deg, rgba(255,115,115,1) 0%, rgba(255,152,64,1) 50%);
-            color: #F5CBA7; /* Light Orange */
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            text-align: center;
-        }
-        .header {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            font-size: 24px;
-            font-weight: bold;
-        }
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .prompt {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-        .input-container {
-            display: flex;
-            align-items: center;
-            background-color: #F5CBA7; /* Light Orange */
-            border-radius: 10px;
-            padding: 10px;
-        }
-        .input-box {
-            background: none;
-            border: none;
-            color: #A04000; /* Dark Orange */
-            font-size: 16px;
-            text-align: center;
-            width: 500px;
-            outline: none;
-        }
-        .add-image {
-            margin-left: 10px;
-            cursor: pointer;
-            font-size: 18px;
-            color: #A04000; /* Dark Orange */
-            background: none;
-            border: none;
-            position: relative;
-        }
-        .add-image:hover::after {
-            content: "Scan your ingredients";
-            position: absolute;
-            bottom: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #F5CBA7;
-            color: #A04000;
-            padding: 5px;
-            border-radius: 5px;
-            font-size: 12px;
-            white-space: nowrap;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'chef_ai/design.css' %}">
 </head>
 <body>
     <div class="header">ChefAI</div>
     <div class="info">
-        <p>Welcome to Recipe Cooker!<br> Input the ingredients you have or take a picture of them to generate recipes you can make with your ingredients!</p>
+        <p>Welcome to ChefAI!<br> Select ingredients and available appliances to generate recipes!</p>
     </div>
-    <div class="container">
-        <div class="prompt"><strong>What ingredients do you have?</strong></div>
-        <div class="input-container">
-            <input type="text" class="input-box" placeholder="Enter ingredients...">
-            <button class="add-image">+</button>
+    
+    <!-- Ingredients Section -->
+    <div class="ingredient-group">
+        <h3>Pantry Essentials</h3>
+        <div class="ingredient-container">
+            <div class="ingredient" data-value="butter">Butter</div>
+            <div class="ingredient" data-value="egg">Egg</div>
+            <div class="ingredient" data-value="garlic">Garlic</div>
+            <div class="ingredient" data-value="onion">Onion</div>
+            <div class="ingredient" data-value="milk">Milk</div>
+            <div class="ingredient" data-value="sugar">Sugar</div>
         </div>
     </div>
-    <div class="linkToInformation">
-        <br><br>Click <a href="skills.html" target ="_blank">here</a> to know the skills that are required to make this project
+
+    <div class="ingredient-group">
+        <h3>Vegetables & Greens</h3>
+        <div class="ingredient-container">
+            <div class="ingredient" data-value="bell pepper">Bell Pepper</div>
+            <div class="ingredient" data-value="scallion">Scallion</div>
+            <div class="ingredient" data-value="carrot">Carrot</div>
+            <div class="ingredient" data-value="tomato">Tomato</div>
+            <div class="ingredient" data-value="potato">Potato</div>
+        </div>
     </div>
+
+    <!-- Appliances Section (Hidden by Default) -->
+    <div class="appliance-group hidden">
+        <h3>Which appliances do you have?</h3>
+        <div class="appliance-container">
+            <div class="appliance" data-value="gas stove">Gas Stove</div>
+            <div class="appliance" data-value="grill">Grill</div>
+            <div class="appliance" data-value="air fryer">Air Fryer</div>
+            <div class="appliance" data-value="oven">Oven</div>
+        </div>
+    </div>
+
+
+    <button id="submit-btn" class="hidden">Generate Recipes</button>
+
+    <input type="hidden" id="selectedIngredients" name="ingredients">
+    <input type="hidden" id="selectedAppliances" name="appliances">
+
+<script>
+    document.querySelectorAll('.ingredient').forEach(item => {
+        item.addEventListener('click', function() {
+            this.classList.toggle('selected');
+            updateSelectedIngredients();
+            showApplianceSection();
+            toggleSubmitButton();
+        });
+    });
+
+    document.querySelectorAll('.appliance').forEach(item => {
+        item.addEventListener('click', function() {
+            this.classList.toggle('selected');
+            updateSelectedAppliances();
+        });
+    });
+
+    function updateSelectedIngredients() {
+        let selected = [];
+        document.querySelectorAll('.ingredient.selected').forEach(item => {
+            selected.push(item.getAttribute('data-value'));
+        });
+        document.getElementById('selectedIngredients').value = selected.join(', ');
+    }
+
+    function updateSelectedAppliances() {
+        let selected = [];
+        document.querySelectorAll('.appliance.selected').forEach(item => {
+            selected.push(item.getAttribute('data-value'));
+        });
+        document.getElementById('selectedAppliances').value = selected.join(', ');
+    }
+
+    function showApplianceSection() {
+        let selectedIngredients = document.querySelectorAll('.ingredient.selected');
+        let applianceSection = document.querySelector('.appliance-group');
+        if (selectedIngredients.length > 0) {
+            applianceSection.classList.remove('hidden');
+        } else {
+            applianceSection.classList.add('hidden');
+        }
+    }
+
+    function toggleSubmitButton() {
+        let selectedIngredients = document.querySelectorAll('.ingredient.selected');
+        let submitButton = document.getElementById('submit-btn');
+        if (selectedIngredients.length > 0) {
+            submitButton.classList.remove('hidden');
+        } else {
+            submitButton.classList.add('hidden');
+        }
+    }
+
+
+        document.getElementById("submit-btn").addEventListener("click", function() {
+            let ingredients = document.getElementById("selectedIngredients").value;
+            let appliances = document.getElementById("selectedAppliances").value;
+            
+            // Redirect to Django's recipe generation route
+            window.location.href = `/generate-recipe/?ingredients=${encodeURIComponent(ingredients)}&appliances=${encodeURIComponent(appliances)}`;
+        });
+    </script>
+    
+
 </body>
 </html>

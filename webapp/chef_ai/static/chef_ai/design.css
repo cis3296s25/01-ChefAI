@@ -1,0 +1,114 @@
+body {
+    background: linear-gradient(180deg, rgba(255,115,115,1) 0%, rgba(255,152,64,1) 50%);
+    color: #F5CBA7; 
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 120vh;
+    margin: 0;
+    text-align: center;
+}
+
+.header {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.add-image {
+    margin-left: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #A04000;
+    background: none;
+    border: none;
+    position: relative;
+}
+
+.add-image:hover::after {
+    content: "Scan your ingredients";
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #F5CBA7;
+    color: #A04000;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.linkToInformation {
+    margin-top: 20px;
+}
+
+/* Ingredient & Appliances Group Box  */
+.ingredient-group, .appliance-group {
+    background: rgba(255, 255, 255, 0.2); 
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    padding: 15px;
+    margin: 15px 0;
+    width: 30%;
+    backdrop-filter: blur(5px); 
+    text-align: center;
+}
+
+/* Ingredient & Appliance Grid */
+.ingredient-container, .appliance-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    padding: 10px;
+}
+
+/* Ingredient & Appliance Box */
+.ingredient, .appliance {
+    background-color: #E0E0E0;
+    color: #333;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s, color 0.3s;
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+}
+
+
+.ingredient:hover, .appliance:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.ingredient.selected, .appliance.selected {
+    background-color: rgba(139, 195, 74, 0.8); /* Green with slight transparency */
+    color: white;
+    font-weight: bold;
+}
+
+/* Submit Button */
+#submit-btn {
+    background-color: #F5CBA7;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background 0.3s ease-in-out;
+}
+
+#submit-btn:hover {
+    background-color: #E68900;
+}
+
+/* Hidden by Default */
+.hidden {
+    display: none;
+}
