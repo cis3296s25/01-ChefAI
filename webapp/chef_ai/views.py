@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, FileResponse
+
+from django.http import HttpResponse, JsonResponse , FileResponse
 from django import forms
 from .forms import ingredientList
 from django.conf import settings
@@ -13,6 +14,8 @@ import os
 from dotenv import load_dotenv
 import re
 import io
+
+from .models import Ingredient
 # Create your views here.
 
 load_dotenv()
@@ -107,6 +110,7 @@ def feedLLM(selected_options):
     return parsed
 
 
+
 # Function to generate and download PDF
 def download_pdf(request):
     ai_response = request.session.get('ai_response', "")
@@ -180,3 +184,13 @@ def download_jpg(request):
     buffer.seek(0)
     
     return FileResponse(buffer, as_attachment=True, filename="recipe.jpg")
+
+def search_ingredients(request):
+    # Gets the search query
+    query = request.GET.get('q', '').strip().lower()
+    # Query the database for ingredients whose name starts with the input
+    if query:
+        results = Ingredient.objects.filter(ingredient_name__istartswith=query).values_list('ingredient_name', flat=True)
+        return JsonResponse({'results': list(results)}) # Sends back the matching ingredient names as JSON
+    return JsonResponse({'results': []})
+

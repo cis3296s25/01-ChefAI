@@ -33,7 +33,10 @@
             <form method="POST" action="{% url 'index' %}">
                 {% csrf_token %}
                 <div class="search-container">
-                    <input type="text" id="searchInput">
+                    <div class="search-wrapper">
+                        <input type="text" id="searchInput" autocomplete="off">
+                        <div id="searchSuggestions" class="suggestion-box"></div>
+                    </div> 
                     <input type="hidden" id="final_ingredients" name="final_ingredients">
                     <button id="generateRecipeBtn" class="submit-btn" type="submit">Generate Recipe</button>
                 </div>

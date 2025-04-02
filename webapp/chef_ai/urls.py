@@ -7,7 +7,7 @@ urlpatterns = [
     path("recipe/", views.response_recipe, name="response_recipe"),
     path("download-pdf/", views.download_pdf, name = 'download_pdf'),
     path("download-jpg/", views.download_jpg, name='download_jpg')
-
+    path("search/", views.search_ingredients, name="search_ingredients"),
 
 
 ]

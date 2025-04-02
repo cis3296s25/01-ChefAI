@@ -90,24 +90,60 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Search and select ingredients
-    searchInput.addEventListener('keyup', (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            const searchTerm = searchInput.value.trim().toLowerCase();
+    const suggestionBox = document.getElementById("searchSuggestions");
+    searchInput.addEventListener('keyup', async (event) => {
+        const query = searchInput.value.trim(); // Grabs the user's input and remove any extra spaces
+        // Ignores unneccessary inputs
+        if (query.length < 2) {
+            suggestionBox.style.display = "none";
+            return;
+        }
+        
+        // Sends a request to the backend
+        try {
+            const response = await fetch(`/search/?q=${encodeURIComponent(query)}`);
+            const data = await response.json();
 
-            Object.keys(ingredientCategories).forEach(categoryKey => {
-                ingredientCategories[categoryKey].forEach(item => {
-                    if (item.toLowerCase().includes(searchTerm)) {
-                        const checkbox = document.getElementById(`${categoryKey}-${item.toLowerCase().replace(/\s+/g, '-')}`);
-
-                        if (checkbox && !checkbox.checked) {
-                            checkbox.checked = true;
-                            addSelectedItem(item, categoryKey); // Add to selected items container
-                        }
-                    }
+            suggestionBox.innerHTML = '';
+            if (data.results.length > 0) {
+                data.results.forEach(result => {
+                    const suggestion = document.createElement("div"); // To make each match as a clickable div
+                    suggestion.textContent = result;
+                    suggestion.addEventListener("click", () => {
+                        Object.keys(ingredientCategories).forEach(categoryKey => { // Currently only checks with the hardcoded ingredient categories
+                            ingredientCategories[categoryKey].forEach(item => {
+                                // Selects the checkbox and adds to UI
+                                if (item.toLowerCase() === result.toLowerCase()) {
+                                    const checkboxId = `${categoryKey}-${item.toLowerCase().replace(/\s+/g, '-')}`;
+                                    const checkbox = document.getElementById(checkboxId);
+                                    if (checkbox && !checkbox.checked) {
+                                        checkbox.checked = true;
+                                        addSelectedItem(item, categoryKey);
+                                    }
+                                }
+                            });
+                        });
+                        // Clears input and hides dropdown after user clicks a suggestion
+                        searchInput.value = '';
+                        suggestionBox.innerHTML = '';
+                        suggestionBox.style.display = "none";
+                    });
+                    suggestionBox.appendChild(suggestion);
                 });
-            });
-            searchInput.value = ''; // Clear search input
+                suggestionBox.style.display = "block";
+            } else {
+                suggestionBox.style.display = "none";
+            }
+        } catch (err) {
+            console.error("Search error:", err);
+            suggestionBox.style.display = "none";
+        }
+    });
+
+    // Hides the dropdown if user clicks anywhere on the page
+    document.addEventListener("click", (e) => {
+        if (!searchInput.contains(e.target) && !suggestionBox.contains(e.target)) {
+            suggestionBox.style.display = "none";
         }
     });
 

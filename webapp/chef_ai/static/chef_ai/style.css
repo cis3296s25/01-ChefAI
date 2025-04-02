@@ -411,3 +411,34 @@
     }
 
 }
+  
+  .suggestion-box div {
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+  
+  .suggestion-box div:hover {
+    background-color: #f0f0f0;
+  }
+
+  .search-wrapper {
+    position: relative;
+    width: 500px; /* match the input width */
+  }
+  
+  .suggestion-box {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    color: black;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
