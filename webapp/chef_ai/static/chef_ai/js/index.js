@@ -399,7 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 removeSelectedItem(item);
                 categoryItem.classList.remove("selected");
             }
-            console.log("at bottom of querythinggy");
+           
         });
     });
 
@@ -515,7 +515,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    //grabs items from session storage so that user can add or remove items
+    //grabs items from session storage so that user can add or remove items if they forgot
     const rawOptions = JSON.parse(sessionStorage.getItem('selected_options') || "[]");
     if (rawOptions) {
         const selected_options = rawOptions;
@@ -531,51 +531,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function makeIngredientList(){
         const items = document.querySelectorAll('.selected-item');
-        const final = [];
+        const updatedList = [];
     
         items.forEach(item => {
-            const name = item.querySelector('.ingredient-name').textContent;//gets name of item selected
-            //updates the quantity for ingredient on each key press
+            //gets name of item selected
+            const name = item.querySelector('.ingredient-name').textContent;
+            //gets the qty for that specific ingredient
             const qtyElement = item.querySelector('input[type="text"]');
             qtyElement.addEventListener('input', makeIngredientList);
-            const qty = qtyElement.value || '1';//defaults to one if no value
+            //defaults to one if no value exists
+            const qty = qtyElement.value || '1';
             console.log("inside function here is qty being passed from value ",qty);
-            final.push(`${name} :${qty}`);
+            updatedList.push(`${name} :${qty}`);
         });
-        document.getElementById("final_ingredients").value = final.join(", ");
-        sessionStorage.setItem('selected_options', JSON.stringify(final));//updates the session storage
-        const selected = JSON.parse(sessionStorage.getItem('selected_options') || "[]");
-        console.log("updated list in makeINgredientList: ", selected);
-        return final;
+        document.getElementById("final_ingredients").value = updatedList.join(", ");
+        //updates the session storage
+        sessionStorage.setItem('selected_options', JSON.stringify(updatedList));
+        return updatedList;
 
     }
     
 
 
-
+//uses a promise so that we can implement a loading screen
 document.getElementById("generateRecipeBtn").addEventListener("click", () => {
-    const items = document.querySelectorAll('.selected-item');
     const numRecipes = numRecipesDisplay.value;
-    const final = [];
+    const finalList = makeIngredientList();
 
-    items.forEach(item => {
-        const name = item.querySelector('.ingredient-name').textContent;
-        const qty = item.querySelector('input[type="text"]').value || '1';
-        final.push(`${name} :${qty}`);
-    });
-    
 
-    document.getElementById("final_ingredients").value = final.join(", ");
-    console.log("Final Ingredients:", final); // For debugging
+    //laoding screen
     document.getElementById("searchSection").style.display = "none";
     document.getElementById("loadingScreen").style.display = "block";
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
 
-
+    
     fetch('/post-recipe/', {
         method: 'POST',
-        body: JSON.stringify({'ingredients':final, 'numberOfRecipes': numRecipes
+        body: JSON.stringify({'ingredients':finalList, 'numberOfRecipes': numRecipes
         }),
         headers: {
             'Content-Type': 'application/json',
@@ -583,12 +576,11 @@ document.getElementById("generateRecipeBtn").addEventListener("click", () => {
             'X-CSRFToken': getCookie('csrftoken') 
         }
     })
-    //loading function
+    //gets json data
     .then(response => {
-        
         return response.json();
     })
-    //success function
+    //redirects to new page
     .then(data => {
         console.log(data);
         sessionStorage.setItem('ai_response', JSON.stringify(data));

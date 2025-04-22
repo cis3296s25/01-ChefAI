@@ -295,6 +295,7 @@
 .return-link-container .return-link {
     text-decoration: underline;
     text-align: center;
+    color:white;
     
 }
 .return-link-container .return-link:hover {
